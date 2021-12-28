@@ -16,9 +16,18 @@ def ActRobot(robot):
         sw =robot.investigate_sw()
 
         l1 = [up,down,left,right,ne,nw,se,sw]
-        if "enemy" in l1 and robot.GetVirus() > 1000:
-                robot.DeployVirus(500)
+        if "enemy" in l1 and robot.GetVirus() > 500:
+                robot.DeployVirus(700)
+
         
+                
+
+  #      if l1 == "enemy-base":
+    #            base.create_robot(x,y)
+
+ 
+
+
         
         if up == "enemy-base":
                 if x < 10:
@@ -31,8 +40,8 @@ def ActRobot(robot):
                         msg_y = str(y-1)
                 msg = msg_x + msg_y
                 robot.setSignal(msg)
-                if robot.GetVirus() > 500:
-                        robot.DeployVirus(200)
+                
+                robot.DeployVirus(robot.GetVirus())
         
         if down == "enemy-base":
                 if x < 10:
@@ -45,8 +54,8 @@ def ActRobot(robot):
                         msg_y = str(y+1)
                 msg = msg_x + msg_y
                 robot.setSignal(msg)
-                if robot.GetVirus() > 500:
-                        robot.DeployVirus(500)
+                
+                robot.DeployVirus(robot.GetVirus())
 
         if left == "enemy-base":
                 if x-1 < 10:
@@ -59,8 +68,8 @@ def ActRobot(robot):
                         msg_y = str(y)
                 msg = msg_x + msg_y
                 robot.setSignal(msg)
-                if robot.GetVirus() > 500:
-                        robot.DeployVirus(500)
+                
+                robot.DeployVirus(robot.GetVirus())
         
         if right == "enemy-base":
                 if x+1 < 10:
@@ -73,8 +82,8 @@ def ActRobot(robot):
                         msg_y = str(y)
                 msg = msg_x + msg_y
                 robot.setSignal(msg)
-                if robot.GetVirus() > 500:
-                        robot.DeployVirus(500)
+                
+                robot.DeployVirus(robot.GetVirus())
 
         if ne == "enemy-base":
                 if x+1 < 10:
@@ -87,8 +96,8 @@ def ActRobot(robot):
                         msg_y = str(y-1)
                 msg = msg_x + msg_y
                 robot.setSignal(msg)
-                if robot.GetVirus() > 500:
-                        robot.DeployVirus(500)
+                
+                robot.DeployVirus(robot.GetVirus())
 
         if nw == "enemy-base":
                 if x-1 < 10:
@@ -101,8 +110,8 @@ def ActRobot(robot):
                         msg_y = str(y-1)
                 msg = msg_x + msg_y
                 robot.setSignal(msg)
-                if robot.GetVirus() > 500:
-                        robot.DeployVirus(500)
+                
+                robot.DeployVirus(700)
 
         if se == "enemy-base":
                 if x+1 < 10:
@@ -115,8 +124,7 @@ def ActRobot(robot):
                         msg_y = str(y+1)
                 msg = msg_x + msg_y
                 robot.setSignal(msg)
-                if robot.GetVirus() > 500:
-                        robot.DeployVirus(500)
+                robot.DeployVirus(robot.GetVirus())
 
         if sw == "enemy-base":
                 if x-1 < 10:
@@ -129,30 +137,75 @@ def ActRobot(robot):
                         msg_y = str(y+1)
                 msg = msg_x + msg_y
                 robot.setSignal(msg)
-                if robot.GetVirus() > 500:
-                        robot.DeployVirus(500)
+                robot.DeployVirus(robot.GetVirus())
 
 
+        for i in range (0,4):
+                if l1 == "friend-base":
+                        return 0
+                
+        for i in range (5, 20):
+                if l1 == "enemy":
+                        return 0
 
-        if 'enemy-base' in l1:
-                return 0
-        elif len(signal) > 0:
-                desti_x = int(signal[:2])
-                desti_y = int(signal[2:])
-                dx = (desti_x - x)
-                dy = (desti_y - y)
-                if abs(dx) >= abs(dy):
-                        if dx > 0:
-                                return 2
-                        else:
-                                return 4
+        for i in range (20, 31):
+                if l1 == "enemy":
+                        return(1,4)
+
+        if robot.GetInitialSignal() == '0':
+                if l1 == "friend-base":
+                        return 0
                 else:
-                        if dy > 0:
-                                return 3
-                        else:
+                        return randint(1,4)
+        if l1 == "enemy-base":
+                c,d = robot.GetPosition()
+                dx = c - x
+                dy = d - c
+                if dx == 0:
+                        if dy == 0:
+                                return 0
+                        elif dy > 0: 
                                 return 1
-        else:
+                        else: 
+                                return 4
+                        
+                elif dx > 0:
+                        if dy < 0:
+                                return 3
+                        elif dy > 0:
+                                return 1
+                        return 2
+                elif dx < 0:
+                        if dy < 0:
+                                return 3
+                        elif dy > 0:
+                                return 1
+                        return 4 
+        elif robot.GetInitialSignal() == 'E0':
+                if 'enemy-base' in l1:
+                        return 0
+                elif len(signal) > 0:
+                        
+                        desti_x = int(signal[:2])
+                        desti_y = int(signal[2:])
+                        if x < desti_x:
+                                return 2
+                        if x > desti_x:
+                                return 4
+                        if y > desti_y:
+                                return 1
+                        if y < desti_y:
+                                return 3
+                        if x == desti_x:
+                                if y == desti_y:
+                                        return 0
+                else:
+                        return randint(1,4)
+        else: 
                 return randint(1,4)
+
+
+              
 
 
 
@@ -211,14 +264,21 @@ def ActBase(base):
         sw_b = base.investigate_sw()
 
         l2=[up_b,down_b,left_b,right_b,ne_b,nw_b,se_b,sw_b]
-        if "enemy" in l2 and base.GetVirus() > 500:
-                base.DeployVirus(200)
+        if "enemy" in l2 and base.GetVirus() > 400 and base.GetElixir() > 500:
+                base.DeployVirus(1000)
+                
+
         if "enemy-base" in l2 and base.GetVirus() > 500:
-                base.DeployVirus(200)
+                base.DeployVirus(700)
 
         pos = base.GetListOfSignals() 
         if  base.GetElixir() > 500:
                  base.create_robot('')
+                 base.create_robot('')
+                 base.create_robot('')
+                 base.create_robot('0')
+                 base.create_robot('E0')
+                 
         if len(pos) > 0:
                 bx = pos[0][:2]
                 by = pos[0][2:]
@@ -237,5 +297,4 @@ def ActBase(base):
 #    return
 # 
 # from random import randint
-
 
